@@ -11,7 +11,6 @@ export enum ECategoryType {
   AD = 'AD',
   AE = 'AE',
 }
-
 export class Customer {
   private _cpf: string
   private _name: string
@@ -52,10 +51,6 @@ export class Customer {
 
   get hasRent(): boolean {
     return this._hasRent
-  }
-
-  set hasRent(newRent: boolean) {
-    this._hasRent = newRent
   }
 
   static create(newCustomer: Customer): Customer {
