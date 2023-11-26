@@ -133,9 +133,9 @@ export class Vehicle {
   }
 
   static getByPlate(plate: string): Vehicle {
-    const vehicle = this.vehicles.filter(
+    const vehicle = this.vehicles.find(
       (vehicle) => vehicle.plate === plate,
-    )[0]
+    )
 
     if (!vehicle) {
       throw new NotFound('Veículo não foi encontrado')
@@ -144,24 +144,31 @@ export class Vehicle {
     return vehicle
   }
 
-  static getAll(page: number, limit: number): Vehicle[] | [] {
-    const startIndex = (page - 1) * limit
-    const endIndex = page * limit
-
-    const vehicle = this.vehicles.slice(startIndex, endIndex)
-
-    if (!vehicle) {
+  static getAll(): Vehicle[] {
+    if (!this.vehicles.length) {
       throw new NotFound('Nenhum veículo foi encontrado')
     }
 
-    return vehicle
+    return this.vehicles
   }
 
   static listRentedVehicles(): Vehicle[] {
-    return this.vehicles.filter((vehicle) => vehicle._rented === true)
+    const rentedVehicles = this.vehicles.filter((vehicle) => vehicle._rented === true)
+
+    if (!rentedVehicles.length) {
+      throw new NotFound('Não há nenhum veículo alugado')
+    }
+
+    return rentedVehicles
   }
 
   static listAvailableVehicles(): Vehicle[] {
-    return this.vehicles.filter((vehicle) => vehicle._rented === false)
+    const availableVehicles = this.vehicles.filter((vehicle) => vehicle._rented === false)
+
+    if (!availableVehicles.length) {
+      throw new NotFound('Não há nenhum veículo disponível')
+    }
+
+    return availableVehicles
   }
 }
