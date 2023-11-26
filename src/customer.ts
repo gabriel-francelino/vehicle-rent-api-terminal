@@ -120,6 +120,19 @@ export class Customer {
     return customer
   }
 
+  static delete(customerCpf: string): boolean {
+    const customerIndex = this.customers.findIndex(
+      (customer) => customer._cpf === customerCpf,
+    )
+
+    if (customerIndex === -1) {
+      throw new NotFound('Cliente não foi encontrado')
+    }
+
+    this.customers.splice(customerIndex, 1)
+    return true
+  }
+
   // static delete(customerId: string): boolean {
   //   const customerIndex = this.customers.findIndex(
   //     (customer) => customer._id === customerId,
