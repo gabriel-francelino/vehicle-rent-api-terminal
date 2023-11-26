@@ -53,6 +53,10 @@ export class Customer {
     return this._hasRent
   }
 
+  set hasRent(hasRent: boolean) {
+    this._hasRent = hasRent
+  }
+
   static create(newCustomer: Customer): Customer {
     const alreadyExistsCustomer = this.customers.some(
       customer => customer.cpf === newCustomer.cpf,
