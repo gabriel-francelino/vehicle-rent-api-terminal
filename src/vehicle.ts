@@ -102,7 +102,7 @@ export class Vehicle {
     const alreadyExistsVehicle = this.findPlate(vehicle.plate)
 
     if (alreadyExistsVehicle) {
-      throw new BadRequest('Veículo não encontrado')
+      throw new BadRequest('Veículo já cadastrado')
     }
 
     this.vehicles.push(vehicle)
