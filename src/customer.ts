@@ -84,17 +84,12 @@ export class Customer {
     return customer
   }
 
-  static getAll(page: number, limit: number): Customer[] {
-    const startIndex = (page - 1) * limit
-    const endIndex = page * limit
-
-    const customer = this.customers.slice(startIndex, endIndex)
-
-    if (!customer) {
+  static getAll(): Customer[] {
+    if (!this.customers.length) {
       throw new NotFound('Nenhum cliente foi encontrado')
     }
 
-    return customer
+    return this.customers
   }
 
   static delete(customerCpf: string): boolean {
