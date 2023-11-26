@@ -115,7 +115,7 @@ export class Vehicle {
       (vehicle) => vehicle.plate === plate,
     )
 
-    console.log(vehicleDeleted)
+    // console.log(vehicleDeleted)
 
     if (vehicleDeleted == undefined) {
       throw new NotFound('Veículo não encontrado')

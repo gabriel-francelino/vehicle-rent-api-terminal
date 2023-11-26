@@ -2,6 +2,8 @@ import * as promptSync from 'prompt-sync';
 import { Customer, ECategoryType } from './customer';
 import { BadRequest, DataInvalid } from './error/errors';
 import { TVehicle, Vehicle } from './vehicle';
+import { Rent } from './rent';
+import { de } from 'date-fns/locale';
 
 const prompt = promptSync();
 
@@ -39,7 +41,7 @@ export class RentalSystem {
             const newCustomer: Customer = new Customer(cpf, name, new Date(dateOfBirth), driverLicense as ECategoryType);
             const customerCreated: Customer = Customer.create(newCustomer);
             if (customerCreated) {
-                console.log("Cliente cadastrado com sucesso!");
+                console.log("\nCliente cadastrado com sucesso!");
                 console.log(customerCreated);
             }else {
                 throw new DataInvalid("Não foi possível cadastrar o cliente. Veirique os dados e tente novamente.");
@@ -98,7 +100,7 @@ export class RentalSystem {
             const newVehicle = new Vehicle(model, color, chassis, type as TVehicle, plate, dailyRental);
             const vehicleCreated = Vehicle.create(newVehicle);
             if (vehicleCreated) {
-                console.log("Veículo cadastrado com sucesso!");
+                console.log("\nVeículo cadastrado com sucesso!");
                 console.log(vehicleCreated);
             }else {
                 throw new DataInvalid("Não foi possível cadastrar o veículo. Veirique os dados e tente novamente.");
@@ -159,6 +161,53 @@ export class RentalSystem {
             console.log("======== Listar veículos disponíveis ========");
             const availableVehicles: Vehicle[] = Vehicle.listAvailableVehicles();
             console.log(availableVehicles);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    static rentVehicle(): void {
+        try {
+            console.log("======== Alugar veículo ========");
+            const cpf: string = prompt("CPF: ");
+            const plate: string = prompt("Placa: ");
+            const rentalDate: string = prompt("Data de aluguel(aaaa-mm-dd): ");
+            const devolutionDate: string = prompt("Data de devolução(aaaa-mm-dd): ");
+    
+            const rent = Rent.rentVehicle(cpf, plate, new Date(rentalDate), new Date(devolutionDate));
+            console.log("\nVeículo alugado com sucesso!");
+            console.log(rent);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    static devolutionVehicle(): void {
+        try {
+            console.log("======== Devolver veículo ========");
+            const cpf: string = prompt("CPF: ");
+            const plate: string = prompt("Placa: ");
+            
+            const devolution = Rent.devolutionVehicle(cpf, plate);
+            
+            if(!devolution) {
+                throw new BadRequest("Não foi possível devolver o veículo.");
+            }
+
+            console.log(devolution);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    static generateInvoice(): void {
+        try {
+            console.log("======== Gerar fatura do aluguel ========");
+            const cpf: string = prompt("CPF: ");
+            const plate: string = prompt("Placa: ");
+            
+            const invoice = Rent.generateInvoice(cpf, plate);
+            console.log(invoice);
         } catch (error) {
             console.log(error.message);
         }

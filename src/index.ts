@@ -43,14 +43,16 @@ try {
                 RentalSystem.listAvailableVehicles();
                 break;
             case "11":
+                RentalSystem.rentVehicle();
                 break;
             case "12":
+                RentalSystem.devolutionVehicle();
                 break;
             case "13":
+                RentalSystem.generateInvoice();
                 break;
             case "0":
                 console.log("Saindo...");
-                console.log(option)
                 break;
             default:
                 break;
