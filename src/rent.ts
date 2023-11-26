@@ -1,12 +1,12 @@
-import { compareLicense, verifyCustomer, verifyVehicle } from "./utils/rentValidation";
+import { compareLicense, verifyCustomerWithoutRent, verifyVehicleWithoutRent } from "./utils/rentValidation";
 import { DataInvalid, NotFound } from "./error/errors";
 import { Customer } from "./customer";
 import { Vehicle } from "./vehicle";
 import { differenceInDays, parseISO } from "date-fns";
 
 const IVehicle = {
-    'CAR' : 'B',
-    'MOTORCYCLE' : 'A',
+    'CAR': 'B',
+    'MOTORCYCLE': 'A',
 }
 
 interface IInvoice {
@@ -83,39 +83,30 @@ export class Rent {
         this._valueRental = newValueRental;
     }
 
-    static calculateRent(vehicle: Vehicle, days: number, increasePorcentage: number): number {
+    private static calculateRent(vehicle: Vehicle, days: number): number {
         const valueBase = days * vehicle.dailyRental;
-        const valueIncrease = valueBase * (increasePorcentage / 100);
+        const valueIncrease = valueBase * (vehicle.increasePorcentage / 100);
         return valueBase + valueIncrease;
     }
 
     static rentVehicle(customerCpf: string, vehiclePlate: string, rentalDate: Date, devolutionDate: Date): Rent {
-        const customer = Customer.getByCpf(customerCpf)
-        verifyCustomer(customer)
-
-        const vehicle = Vehicle.getByPlate(vehiclePlate)
-        verifyVehicle(vehicle)
-        const driverLicenseUser = customer.driverLicense
-        const typeVehicle = IVehicle[vehicle.type] 
-        const verifyLicense = compareLicense(typeVehicle, driverLicenseUser)
+        const customer = verifyCustomerWithoutRent(customerCpf);
+        const vehicle = verifyVehicleWithoutRent(vehiclePlate);
+        const verifyLicense = compareLicense(vehicle.type, customer.driverLicense)
 
         if (!verifyLicense) {
-            throw new DataInvalid()
+            throw new DataInvalid("CNH incompatível com o veículo selecionado")
         }
 
-        vehicle.rented = true
-        const devolution = parseISO(String(devolutionDate)) 
-        const rental = parseISO(String(rentalDate)) 
+        const rentedDays = differenceInDays(devolutionDate, rentalDate);
+        const valueRental = this.calculateRent(vehicle, rentedDays);
+        const rent = new Rent(customer, vehicle, rentalDate, devolutionDate);
+        rent.valueRental = valueRental;
+        customer.hasRent = true;
+        vehicle.rented = true;
+        this.listOfRent.push(rent);
 
-        const dateRented = differenceInDays(devolution, rental);
-        const increasePorcentage = vehicle.type === 'CAR' ? 10 : 5;
-        const valueRental = this.calculateRent(vehicle, dateRented, increasePorcentage)
-
-        const rent = new Rent(customer, vehicle, rentalDate, devolutionDate)
-        rent.valueRental = valueRental
-        Rent.listOfRent.push(rent)
-
-        return rent
+        return rent;
     }
 
     static devolutionVehicle(cpf: string, plate: string): boolean {
@@ -130,28 +121,28 @@ export class Rent {
 
         const indexRent = Rent.listOfRent.findIndex(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
         Rent.listOfRent.splice(indexRent, 1)
-        
+
         return true;
     }
 
-    static generateInvoice(cpf: string, plate: string): IInvoice  {
-        const rent = Rent.listOfRent.find(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
+    // static generateInvoice(cpf: string, plate: string): IInvoice  {
+    //     const rent = Rent.listOfRent.find(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
 
-        if (!rent) {
-            throw new NotFound('Aluguel não encontrado')
-        }
-        
-        return {
-            customerName: rent.customer.name,
-            customerCpf: rent.customer.cpf,
-            customerCnh: rent.customer.driverLicense,
-            vehiclePlate: rent.vehicle.plate,
-            vehicleType: rent.vehicle.type,
-            vehicleModel: rent.vehicle.model,
-            vehicleRental: rent.vehicle.dailyRental,
-            rentalDate: rent.rentalDate,
-            devolutionDate: rent.devolutionDate,
-            valueRental: rent.valueRental,
-        }
-    }
+    //     if (!rent) {
+    //         throw new NotFound('Aluguel não encontrado')
+    //     }
+
+    //     return {
+    //         customerName: rent.customer.name,
+    //         customerCpf: rent.customer.cpf,
+    //         customerCnh: rent.customer.driverLicense,
+    //         vehiclePlate: rent.vehicle.plate,
+    //         vehicleType: rent.vehicle.type,
+    //         vehicleModel: rent.vehicle.model,
+    //         vehicleRental: rent.vehicle.dailyRental,
+    //         // rentalDate: rent.rentalDate,
+    //         // devolutionDate: rent.devolutionDate,
+    //         valueRental: rent.valueRental,
+    //     }
+    // }
 }
