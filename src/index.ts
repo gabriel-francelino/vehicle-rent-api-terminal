@@ -1,12 +1,12 @@
 import * as promptSync from 'prompt-sync';
-import { Interface } from './interface';
+import { System } from './system';
 
 const prompt = promptSync();
 let option: string = "99";
 
 try {
     do {
-        Interface.show();
+        System.showInterface();
         option = prompt("Escolha uma opção: ");
         switch (option) {
             case "1":

@@ -1,5 +1,7 @@
-export class Interface {
-    static show(): void {
+import * as promptSync from 'prompt-sync';
+const prompt = promptSync();
+export class System {
+    static showInterface(): void {
         console.log(`
         ==============================
         Escolha uma opção:
