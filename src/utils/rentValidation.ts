@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns'
 import { Customer } from '../customer'
 import { BadRequest, DataInvalid, NotFound } from '../error/errors'
 import { Vehicle } from '../vehicle'
@@ -58,4 +59,18 @@ export function verifyVehicleWithoutRent(vehiclePlate: string): Vehicle {
   }
 
   return vehicle
+}
+
+export function verifyRentalDate(initialDate: Date, endDate: Date): void {
+  const difference = differenceInDays(endDate, initialDate)
+  const currentDate = new Date()
+
+  if (initialDate < currentDate) {
+    throw new BadRequest("A data de locação deve ser maior que a data atual")
+  }
+
+  if (difference <= 0) {
+    throw new BadRequest("A data de devolução deve ser maior que a data de locação")
+  }
+
 }

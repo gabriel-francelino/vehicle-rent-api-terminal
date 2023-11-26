@@ -1,4 +1,4 @@
-import { compareLicense, verifyCustomerWithoutRent, verifyVehicleWithoutRent } from "./utils/rentValidation";
+import { compareLicense, verifyCustomerWithoutRent, verifyRentalDate, verifyVehicleWithoutRent } from "./utils/rentValidation";
 import { DataInvalid, NotFound } from "./error/errors";
 import { Customer } from "./customer";
 import { Vehicle } from "./vehicle";
@@ -107,10 +107,12 @@ export class Rent {
         const customer = verifyCustomerWithoutRent(customerCpf);
         const vehicle = verifyVehicleWithoutRent(vehiclePlate);
         const verifyLicense = compareLicense(vehicle.type, customer.driverLicense)
+        verifyRentalDate(rentalDate, devolutionDate);
 
         if (!verifyLicense) {
             throw new DataInvalid("CNH incompatível com o veículo selecionado")
         }
+
 
         const rentedDays = differenceInDays(devolutionDate, rentalDate);
         const valueRental = this.calculateRent(vehicle, rentedDays);
