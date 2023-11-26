@@ -32,7 +32,9 @@ export function compareLicense(typeVehicle: string, driverLicenseUser: string) {
   return true
 }
 
-export function verifyCustomer(customer: Customer): void {
+export function verifyCustomerWithoutRent(customerCpf: string): Customer {
+  const customer = Customer.getByCpf(customerCpf)
+
   if (!customer) {
     throw new DataInvalid("Usuário Inválido")
   }
@@ -40,9 +42,13 @@ export function verifyCustomer(customer: Customer): void {
   if (customer.hasRent) {
     throw new BadRequest("Usuário já possui um veículo alugado")
   }
+
+  return customer
 }
 
-export function verifyVehicle(vehicle: Vehicle | undefined): void {
+export function verifyVehicleWithoutRent(vehiclePlate: string): Vehicle {
+  const vehicle = Vehicle.getByPlate(vehiclePlate)
+
   if (!vehicle) {
     throw new DataInvalid("Veículo Inválido")
   }
@@ -50,4 +56,6 @@ export function verifyVehicle(vehicle: Vehicle | undefined): void {
   if (vehicle.rented) {
     throw new BadRequest("Veiculo está em uso e não poderá ser alugado")
   }
+
+  return vehicle
 }
