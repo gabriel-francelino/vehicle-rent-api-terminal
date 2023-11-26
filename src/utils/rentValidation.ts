@@ -11,7 +11,7 @@ export const punctuation = {
   E: 16,
 } as const
 
-export function compareLicense(typeVehicle: string, driverLicenseUser: string) {
+export function compareLicense(typeVehicle: string, driverLicenseUser: string): boolean {
   if (!typeVehicle) {
     throw new NotFound('Tipo de veiculo inválido')
   }
