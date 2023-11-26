@@ -1,4 +1,3 @@
-// import { UUID, randomUUID } from 'crypto'
 import { AlreadyRegistered, NotFound } from './error/errors'
 
 export enum ECategoryType {
@@ -14,14 +13,12 @@ export enum ECategoryType {
 }
 
 export class Customer {
-  
-  // private _id: UUID
   private _cpf: string
   private _name: string
   private _dateOfBirth: Date
   private _driverLicense: ECategoryType
-  private _hasRent = false
-  
+  private _hasRent: boolean
+
   private static customers: Customer[] = []
 
   constructor(
@@ -30,16 +27,12 @@ export class Customer {
     dateOfBirth: Date,
     driverLicense: ECategoryType,
   ) {
-    // this._id = randomUUID()
     this._cpf = cpf
     this._name = name
     this._dateOfBirth = dateOfBirth
     this._driverLicense = driverLicense
+    this._hasRent = false
   }
-
-  // get id(): UUID {
-  //   return this._id
-  // }
 
   get cpf(): string {
     return this._cpf
@@ -73,27 +66,11 @@ export class Customer {
     if (alreadyExistsCustomer) {
       throw new AlreadyRegistered('Cliente já registrado')
     }
-    
+
     this.customers.push(newCustomer)
-    
-    // TO-DO precisei fazer mais uma consulta para pegar o ID e mandar para front!
 
-    const customer = this.customers.find(customer => customer.cpf === newCustomer.cpf)
-// 
-    return customer as Customer
+    return newCustomer
   }
-
-  // static getById(customerId: string): Customer {
-  //   const customer = this.customers.find(
-  //     (customer) => customer._id === customerId,
-  //   )
-
-  //   if (!customer) {
-  //     throw new NotFound('Cliente não foi encontrado')
-  //   }
-
-  //   return customer
-  // }
 
   static getByCpf(customerCpf: string): Customer {
     const customer = this.customers.find(
@@ -113,7 +90,7 @@ export class Customer {
 
     const customer = this.customers.slice(startIndex, endIndex)
 
-    if(!customer) {
+    if (!customer) {
       throw new NotFound('Nenhum cliente foi encontrado')
     }
 
@@ -132,17 +109,4 @@ export class Customer {
     this.customers.splice(customerIndex, 1)
     return true
   }
-
-  // static delete(customerId: string): boolean {
-  //   const customerIndex = this.customers.findIndex(
-  //     (customer) => customer._id === customerId,
-  //   )
-
-  //   if (customerIndex === -1) {
-  //     throw new NotFound('Cliente não foi encontrado')
-  //   }
-
-  //   this.customers.splice(customerIndex, 1)
-  //   return true
-  // }
 }
