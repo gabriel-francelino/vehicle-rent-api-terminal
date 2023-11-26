@@ -83,6 +83,20 @@ export class Rent {
         this._valueRental = newValueRental;
     }
 
+    static get listOfRents(): Rent[] {
+        return this.listOfRent;
+    }
+
+    static getRent(cpf: string, plate: string): Rent {
+        const rent = Rent.listOfRent.find(rent => rent.customer.cpf === cpf && rent.vehicle.plate === plate)
+
+        if (!rent) {
+            throw new NotFound('Aluguel não encontrado')
+        }
+
+        return rent;
+    }
+
     private static calculateRent(vehicle: Vehicle, days: number): number {
         const valueBase = days * vehicle.dailyRental;
         const valueIncrease = valueBase * (vehicle.increasePorcentage / 100);
@@ -110,7 +124,7 @@ export class Rent {
     }
 
     static devolutionVehicle(cpf: string, plate: string): boolean {
-        const rent = Rent.listOfRent.find(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
+        const rent = this.getRent(cpf, plate)
 
         if (!rent) {
             throw new NotFound('Aluguel não encontrado')
@@ -119,7 +133,7 @@ export class Rent {
         rent.vehicle.rented = false
         rent.customer.hasRent = false
 
-        const indexRent = Rent.listOfRent.findIndex(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
+        const indexRent = Rent.listOfRent.findIndex(rent => rent.customer.cpf === cpf && rent.vehicle.plate === plate)
         Rent.listOfRent.splice(indexRent, 1)
 
         return true;
