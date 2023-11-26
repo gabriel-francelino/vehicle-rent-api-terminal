@@ -9,7 +9,7 @@ export class Vehicle {
   private _type: TVehicle
   private _plate: string
   private _dailyRental: number
-  private _rented = false
+  private _rented: boolean
 
   private _increasePorcentage = 0
 
@@ -22,7 +22,6 @@ export class Vehicle {
     type: TVehicle,
     plate: string,
     dailyRental: number,
-    rented: boolean,
   ) {
     this._model = model
     this._color = color
@@ -30,19 +29,11 @@ export class Vehicle {
     this._type = type
     this._plate = plate
     this._dailyRental = dailyRental
-    this._rented = rented
-
-    // TO-DO validar dados de entrada
-    // TO-DO validar duplicidade
-    Vehicle.vehicles.push(this)
+    this._rented = false
   }
 
   get model(): string {
     return this._model
-  }
-
-  set model(newModel: string) {
-    this._model = newModel
   }
 
   get color(): string {
@@ -110,39 +101,38 @@ export class Vehicle {
   static create(vehicle: Vehicle): Vehicle {
     const alreadyExistsVehicle = this.findPlate(vehicle.plate)
 
-    if(alreadyExistsVehicle){
+    if (alreadyExistsVehicle) {
       throw new BadRequest('Veículo não encontrado')
-    } 
+    }
 
     this.vehicles.push(vehicle)
 
     return vehicle
   }
 
-  // TO-DO - DEVOLVER VEÍCULO
-  // returnVehicle(userId: string, place: string): void {}
-
-  static delete(plate: string): boolean | undefined {
-    const index = this.vehicles.findIndex(
+  static delete(plate: string): boolean {
+    const vehicleDeleted = this.vehicles.find(
       (vehicle) => vehicle.plate === plate,
     )
 
-    if (index === -1) {
+    console.log(vehicleDeleted)
+
+    if (vehicleDeleted == undefined) {
       throw new NotFound('Veículo não encontrado')
     }
 
-    const vehicle = this.vehicles[index]
-
-    if (vehicle.rented) {
-      throw new BadRequest('Veículo alugado e não pode ser excluído')
+    if (vehicleDeleted.rented) {
+      throw new BadRequest('Veículo está alugado e não pode ser excluído')
     }
+
+    const index = this.vehicles.indexOf(vehicleDeleted)
 
     this.vehicles.splice(index, 1)
 
     return true
   }
 
-  static getByPlate(plate: string): Vehicle  {
+  static getByPlate(plate: string): Vehicle {
     const vehicle = this.vehicles.filter(
       (vehicle) => vehicle.plate === plate,
     )[0]
@@ -160,7 +150,7 @@ export class Vehicle {
 
     const vehicle = this.vehicles.slice(startIndex, endIndex)
 
-    if(!vehicle) {
+    if (!vehicle) {
       throw new NotFound('Nenhum veículo foi encontrado')
     }
 
