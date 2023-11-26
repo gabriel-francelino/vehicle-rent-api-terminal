@@ -32,3 +32,10 @@ export class InternalServer extends Error {
         this.name = 'InternalServer'
     }
 }
+
+export class DifferenceBetweenDate extends Error {
+    constructor(message = 'Diferença entre datas deve ser maior que 0(zero)') {
+        super(message)
+        this.name = 'DifferenceBetweenDate'
+    }
+}
