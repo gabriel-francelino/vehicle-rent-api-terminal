@@ -10,8 +10,7 @@ export class Vehicle {
   private _plate: string
   private _dailyRental: number
   private _rented: boolean
-
-  private _increasePorcentage = 0
+  private _increasePorcentage: number
 
   static vehicles: Vehicle[] = []
 
@@ -30,6 +29,7 @@ export class Vehicle {
     this._plate = plate
     this._dailyRental = dailyRental
     this._rented = false
+    this._increasePorcentage = (type === 'CAR') ? 10 : 5
   }
 
   get model(): string {
