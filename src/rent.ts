@@ -139,24 +139,28 @@ export class Rent {
         return true;
     }
 
-    // static generateInvoice(cpf: string, plate: string): IInvoice  {
-    //     const rent = Rent.listOfRent.find(r => r.customer.cpf === cpf && r.vehicle.plate === plate)
+    static generateInvoice(cpf: string, plate: string): string {
+        const rent = this.getRent(cpf, plate)
 
-    //     if (!rent) {
-    //         throw new NotFound('Aluguel não encontrado')
-    //     }
+        if (!rent) {
+            throw new NotFound('Aluguel não encontrado')
+        }
 
-    //     return {
-    //         customerName: rent.customer.name,
-    //         customerCpf: rent.customer.cpf,
-    //         customerCnh: rent.customer.driverLicense,
-    //         vehiclePlate: rent.vehicle.plate,
-    //         vehicleType: rent.vehicle.type,
-    //         vehicleModel: rent.vehicle.model,
-    //         vehicleRental: rent.vehicle.dailyRental,
-    //         // rentalDate: rent.rentalDate,
-    //         // devolutionDate: rent.devolutionDate,
-    //         valueRental: rent.valueRental,
-    //     }
-    // }
+        return `
+        ============ FATURA DO CLIENTE ============
+        Nome do cliente: ${rent.customer.name}
+        CPF: ${rent.customer.cpf}
+        CNH: ${rent.customer.driverLicense}
+        ------------ DADOS DO VEÍCULO -------------
+        Placa: ${rent.vehicle.plate}
+        Tipo: ${rent.vehicle.type}
+        Modelo: ${rent.vehicle.model}
+        Diária: ${rent.vehicle.dailyRental}
+        ------------ DADOS DO ALUGUEL -------------
+        Data de aluguel: ${rent.rentalDate.toLocaleDateString('pt-BR')}
+        Data de devolução: ${rent.devolutionDate.toLocaleDateString('pt-BR')}
+        Valor do aluguel: ${rent.valueRental.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        ===========================================
+        `;
+    }
 }
